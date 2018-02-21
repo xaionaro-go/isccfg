@@ -22,7 +22,11 @@ func (cfg Config) UnwrapParam(param string) *Config {
 func (cfg Config) Unwrap() (result *Config, value string) {
 	for k := range cfg {
 		value = k
-		result, _ = cfg[k].(*Config)
+		var ok bool
+		result, ok = cfg[k].(*Config)
+		if !ok {
+			result = nil
+		}
 		break
 	}
 	return
@@ -30,11 +34,14 @@ func (cfg Config) Unwrap() (result *Config, value string) {
 func (cfg Config) Unroll() (result []string) {
 	ptr := &cfg
 	for {
-		ptr, value := ptr.Unwrap()
-		result = append(result, value)
-		if ptr == nil {
+		newPtr, value := ptr.Unwrap()
+		if value == "_value" {
+			result = append(result, ptr.Values()[0])
 			return
+		} else {
+			result = append(result, value)
 		}
+		ptr = newPtr
 	}
 	return
 }
@@ -66,7 +73,7 @@ func NewLexer() *lexmachine.Lexer {
 	}
 	stripToken := func(name string) lexmachine.Action {
 		return func(s *lexmachine.Scanner, m *lexmachines.Match) (interface{}, error) {
-			m.Bytes = m.Bytes[1:len(m.Bytes)-1]
+			m.Bytes = m.Bytes[1 : len(m.Bytes)-1]
 			return s.Token(tokenIds[name], string(m.Bytes), m), nil
 		}
 	}
@@ -189,7 +196,7 @@ func ParseWithLexer(lex *lexmachine.Lexer, reader io.Reader) (cfg Config, err er
 			}
 			goThrough(accumulated[:len(accumulated)-wordsPerValue])
 			addValue(strings.Join(accumulated[len(accumulated)-wordsPerValue:], " ")) // adding the first value of the list
-			for _, localValue := range localValues { // adding the rest values of the list
+			for _, localValue := range localValues {                                  // adding the rest values of the list
 				addValue(localValue)
 			}
 			accumulated = []string{}
