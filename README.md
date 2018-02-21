@@ -2,9 +2,9 @@
 
 It's an abstract to parser config files of ISC utilities (like `isc-dhcp-server` or `bind9`)
 
-It should be used directly. It should be used to write on parsers of specific ISC utilities.
+It should be used directly. It should be used to write on parsers of specific ISC utilities (like [https://github.com/xaionaro-go/iscDhcp/tree/master/cfg](https://github.com/xaionaro-go/iscDhcp/tree/master/cfg)).
 
-# Example
+# Running a hello world
 
 ```
 go get github.com/xaionaro-go/isccfg
