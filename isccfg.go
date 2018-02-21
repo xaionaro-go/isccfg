@@ -80,7 +80,7 @@ func NewLexer() *lexmachine.Lexer {
 
 	lex.Add([]byte(`#[^\n]*\n?`), skip)  // comments as in ISC-DHCP-Server
 	lex.Add([]byte(`//[^\n]*\n?`), skip) // comments as in ISC-BIND9
-	lex.Add([]byte(`([a-z]|[A-Z]|[0-9]|_|\-|\.|=)*`), token("VALUE"))
+	lex.Add([]byte(`([a-z]|[A-Z]|[0-9]|_|\-|\.|=)+`), token("VALUE"))
 	lex.Add([]byte(`"([^\\"]|(\\.))*"`), stripToken("VALUE"))
 	lex.Add([]byte("[\n \t]"), skip)
 	for _, lit := range literals {
